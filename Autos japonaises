@@ -1,10 +1,15 @@
 // App.js
-import React, { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import React, { useState } from "react";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Link
+} from "react-router-dom";
 
-const PHONE = '0766646557';
+const PHONE = "0766646557";
 const WHATSAPP_LINK = `https://wa.me/33766646557`;
-const INSTAGRAM_LINK = 'https://instagram.com/ton_pseudo'; // à remplacer
+const INSTAGRAM_LINK = "https://instagram.com/ton_pseudo"; // À remplacer par ton pseudo Instagram
 
 function Home() {
   return (
@@ -30,7 +35,7 @@ function BonnesAffaires() {
 
 function Avenir() {
   return (
-    <div style={{opacity: 0.4}}>
+    <div style={{ opacity: 0.4 }}>
       <h2>Espace Magasin & Billetterie (À venir)</h2>
       <p>Cette section sera disponible bientôt.</p>
     </div>
@@ -41,35 +46,44 @@ function Contact() {
   return (
     <div>
       <h2>Contactez-nous</h2>
-      <p>Téléphone : <a href={`tel:+33${PHONE.slice(1)}`}>{PHONE}</a></p>
-      <p>WhatsApp : <a href={WHATSAPP_LINK} target="_blank" rel="noreferrer">Discuter sur WhatsApp</a></p>
-      <p>Instagram : <a href={INSTAGRAM_LINK} target="_blank" rel="noreferrer">@ton_pseudo</a></p>
+      <p>
+        Téléphone : <a href={`tel:+33${PHONE.slice(1)}`}>{PHONE}</a>
+      </p>
+      <p>
+        WhatsApp :{" "}
+        <a href={WHATSAPP_LINK} target="_blank" rel="noreferrer">
+          Discuter sur WhatsApp
+        </a>
+      </p>
+      <p>
+        Instagram :{" "}
+        <a href={INSTAGRAM_LINK} target="_blank" rel="noreferrer">
+          @ton_pseudo
+        </a>
+      </p>
     </div>
   );
 }
 
 function Commande() {
   const [form, setForm] = useState({
-    modele: '',
-    motorisation: '',
-    annee: '',
-    budget: '',
-    message: ''
+    modele: "",
+    motorisation: "",
+    annee: "",
+    budget: ""
   });
 
   const [submitted, setSubmitted] = useState(false);
-  const [response, setResponse] = useState(null);
 
-  function handleChange(e) {
-    setForm({...form, [e.target.name]: e.target.value});
-  }
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
 
-  function handleSubmit(e) {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    // ici on simule un envoi serveur
+    // Ici, on pourrait envoyer les données au serveur
     setSubmitted(true);
-    setResponse(null);
-  }
+  };
 
   return (
     <div>
@@ -78,18 +92,181 @@ function Commande() {
         <form onSubmit={handleSubmit}>
           <label>
             Modèle souhaité:<br />
-            <input name="modele" value={form.modele} onChange={handleChange} required />
-          </label><br />
+            <input
+              name="modele"
+              value={form.modele}
+              onChange={handleChange}
+              required
+            />
+          </label>
+          <br />
           <label>
             Motorisation:<br />
-            <select name="motorisation" value={form.motorisation} onChange={handleChange} required>
+            <select
+              name="motorisation"
+              value={form.motorisation}
+              onChange={handleChange}
+              required
+            >
               <option value="">--Choisir--</option>
-              <option>Essence</option>
-              <option>Diesel</option>
-              <option>Hybride</option>
-              <option>Électrique</option>
+              <option value="Essence">Essence</option>
+              <option value="Diesel">Diesel</option>
+              <option value="Hybride">Hybride</option>
+              <option value="Électrique">Électrique</option>
             </select>
-          </label><br />
+          </label>
+          <br />
           <label>
             Année souhaitée:<br />
-            <input type="number" name="annee" value
+            <input
+              type="number"
+              name="annee"
+              value={form.annee}
+              onChange={handleChange}
+              required
+            />
+          </label>
+          <br />
+          <label>
+            Budget max (€):<br />
+            <input
+              type="number"
+              name="budget"
+              value={form.budget}
+              onChange={handleChange}
+              required
+            />
+          </label>
+          <br />
+          <button type="submit">Envoyer la demande</button>
+        </form>
+      )}
+
+      {submitted && (
+        <div>
+          <p>Merci pour votre demande. Vous serez contacté(e) prochainement.</p>
+          <p>
+            Pour toute question, contactez-nous au{" "}
+            <a href={`tel:+33${PHONE.slice(1)}`}>{PHONE}</a> ou via{" "}
+            <a href={WHATSAPP_LINK} target="_blank" rel="noreferrer">
+              WhatsApp
+            </a>
+            .
+          </p>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function Admin() {
+  const [demandes, setDemandes] = useState([
+    { id: 1, client: "Jean", modele: "Honda Civic", statut: null },
+    { id: 2, client: "Marie", modele: "Toyota Corolla", statut: null }
+  ]);
+
+  const repondre = (id, statut) => {
+    setDemandes((prev) =>
+      prev.map((d) => (d.id === id ? { ...d, statut } : d))
+    );
+  };
+
+  return (
+    <div>
+      <h2>Admin - Gestion des commandes</h2>
+      {demandes.map((d) => (
+        <div
+          key={d.id}
+          style={{ border: "1px solid #ccc", margin: "10px", padding: "10px" }}
+        >
+          <p>
+            <b>Client:</b> {d.client}
+          </p>
+          <p>
+            <b>Modèle:</b> {d.modele}
+          </p>
+          <p>
+            <b>Statut:</b> {d.statut || "En attente"}
+          </p>
+          <button onClick={() => repondre(d.id, "Défi accepté ✅")}>
+            Défi accepté
+          </button>{" "}
+          <button onClick={() => repondre(d.id, "Défi non réalisable ❌")}>
+            Défi non réalisable
+          </button>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function Footer() {
+  return (
+    <footer
+      style={{
+        marginTop: 20,
+        borderTop: "1px solid #ccc",
+        padding: 10,
+        textAlign: "center"
+      }}
+    >
+      <p>
+        Contactez-nous :{" "}
+        <a href={`tel:+33${PHONE.slice(1)}`}>{PHONE}</a> |{" "}
+        <a href={WHATSAPP_LINK} target="_blank" rel="noreferrer">
+          WhatsApp
+        </a>{" "}
+        |{" "}
+        <a href={INSTAGRAM_LINK} target="_blank" rel="noreferrer">
+          Instagram
+        </a>
+      </p>
+    </footer>
+  );
+}
+
+export default function App() {
+  return (
+    <Router>
+      <nav style={{ background: "#222", color: "#fff", padding: 10 }}>
+        <Link style={{ color: "#fff", marginRight: 15 }} to="/">
+          Accueil
+        </Link>
+        <Link style={{ color: "#fff", marginRight: 15 }} to="/catalogue">
+          Catalogue
+        </Link>
+        <Link style={{ color: "#fff", marginRight: 15 }} to="/forum">
+          Forum
+        </Link>
+        <Link style={{ color: "#fff", marginRight: 15 }} to="/bonnes-affaires">
+          Bonnes affaires
+        </Link>
+        <Link style={{ color: "#fff", marginRight: 15 }} to="/avenir">
+          À venir
+        </Link>
+        <Link style={{ color: "#fff", marginRight: 15 }} to="/commande">
+          Commande
+        </Link>
+        <Link style={{ color: "#fff", marginRight: 15 }} to="/contact">
+          Contact
+        </Link>
+        <Link style={{ color: "#fff", marginRight: 15 }} to="/admin">
+          Admin
+        </Link>
+      </nav>
+      <div style={{ padding: 20, maxWidth: 800, margin: "auto" }}>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/catalogue" element={<Catalogue />} />
+          <Route path="/forum" element={<Forum />} />
+          <Route path="/bonnes-affaires" element={<BonnesAffaires />} />
+          <Route path="/avenir" element={<Avenir />} />
+          <Route path="/commande" element={<Commande />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/admin" element={<Admin />} />
+        </Routes>
+      </div>
+      <Footer />
+    </Router>
+  );
+}
